@@ -1,0 +1,16 @@
+easyocr
+fastapi
+flask
+flask-cors
+loguru
+opencv-python-headless
+openpyxl
+pake==1.0.0
+pandas
+pillow
+pydantic
+pytesseract
+python-docx
+pyyaml
+requests
+watchdog

@@ -1,0 +1,16 @@
+# Sample content for values-staging.yaml
+anything-llm:
+  image:
+    repository: sogumai/anything_llm
+    tag: staging
+  replicaCount: 2
+  service:
+    type: ClusterIP
+    port: 3001
+  resources:
+    requests:
+      cpu: "300m"
+      memory: "384Mi"
+    limits:
+      cpu: "700m"
+      memory: "768Mi"

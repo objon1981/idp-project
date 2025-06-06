@@ -1,0 +1,16 @@
+# Sample content for values-prod.yaml
+docetl:
+  image:
+    repository: sogumai/docetl
+    tag: latest
+  replicaCount: 3
+  service:
+    type: ClusterIP
+    port: 5000
+  resources:
+    requests:
+      cpu: "400m"
+      memory: "512Mi"
+    limits:
+      cpu: "1"
+      memory: "1Gi"

@@ -1,0 +1,11 @@
+service1:
+  replicaCount: 2
+  image:
+    repository: service1-image
+    tag: latest
+
+service2:
+  replicaCount: 1
+  image:
+    repository: service2-image
+    tag: latest

@@ -1,0 +1,16 @@
+# Sample content for values-prod.yaml
+pake:
+  image:
+    repository: your-dockerhub-username/pake
+    tag: latest
+  replicaCount: 3
+  service:
+    type: ClusterIP
+    port: 8081
+  resources:
+    requests:
+      cpu: "300m"
+      memory: "256Mi"
+    limits:
+      cpu: "800m"
+      memory: "768Mi"

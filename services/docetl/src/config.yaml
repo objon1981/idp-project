@@ -1,0 +1,8 @@
+input_directory: /data/input
+output_directory: /data/processed
+
+file_types:
+  - .pdf
+  - .docx
+  - .txt
+  - .xlsx

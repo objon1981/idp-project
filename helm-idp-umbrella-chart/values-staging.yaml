@@ -1,0 +1,9 @@
+service1:
+  replicaCount: 1
+  image:
+    tag: staging-latest
+
+service2:
+  replicaCount: 1
+  image:
+    tag: staging-latest

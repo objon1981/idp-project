@@ -1,0 +1,26 @@
+# Sample content for docker-compose.yml
+version: '3.8'
+services:
+  kestra:
+    build: ./kestra
+    container_name: kestra
+    ports:
+      - "8080:8080"
+    volumes:
+      - kestra_data:/app/data
+    restart: unless-stopped
+
+  windmill:
+    build: ./windmill
+    container_name: windmill
+    ports:
+      - "3000:3000"
+    volumes:
+      - windmill_data:/data
+    environment:
+      - WINDMILL_MODE=production
+    restart: unless-stopped
+
+volumes:
+  kestra_data:
+  windmill_data:

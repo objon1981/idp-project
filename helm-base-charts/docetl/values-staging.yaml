@@ -1,0 +1,16 @@
+# Sample content for values-staging.yaml
+docetl:
+  image:
+    repository: sogumai/docetl
+    tag: staging
+  replicaCount: 2
+  service:
+    type: ClusterIP
+    port: 5000
+  resources:
+    requests:
+      cpu: "150m"
+      memory: "256Mi"
+    limits:
+      cpu: "400m"
+      memory: "512Mi"

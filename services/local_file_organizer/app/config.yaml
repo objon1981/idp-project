@@ -1,0 +1,8 @@
+source_directory: /watched
+destination_directory: /organized
+file_types:
+  images: ['.jpg', '.jpeg', '.png', '.gif']
+  documents: ['.pdf', '.docx', '.txt']
+  spreadsheets: ['.xls', '.xlsx', '.csv']
+  archives: ['.zip', '.tar.gz', '.rar']
+  others: []

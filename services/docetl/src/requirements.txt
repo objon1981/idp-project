@@ -1,0 +1,6 @@
+pandas
+PyYAML
+loguru
+pdfminer.six
+python-docx
+openpyxl

@@ -1,0 +1,9 @@
+service1:
+  replicaCount: 1
+  image:
+    tag: dev-latest
+
+service2:
+  replicaCount: 1
+  image:
+    tag: dev-latest

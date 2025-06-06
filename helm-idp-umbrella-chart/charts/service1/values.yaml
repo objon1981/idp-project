@@ -1,0 +1,4 @@
+replicaCount: 1
+image:
+  repository: service1-image
+  tag: latest

@@ -1,0 +1,8 @@
+{
+  "env": "production",
+  "port": 3000,
+  "db": {
+    "type": "sqlite",
+    "location": "/data/windmill.db"
+  }
+}

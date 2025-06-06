@@ -1,0 +1,11 @@
+kestra:
+  server:
+    port: 8080
+  storage:
+    type: local
+    local:
+      base-path: /app/data
+  repository:
+    type: h2
+  queue:
+    type: memory

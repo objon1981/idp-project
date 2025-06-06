@@ -1,0 +1,31 @@
+kestra:
+  image:
+    repository: sogumai/kestra
+    tag: dev
+  replicaCount: 1
+  service:
+    type: ClusterIP
+    port: 8082
+  resources:
+    requests:
+      cpu: "200m"
+      memory: "256Mi"
+    limits:
+      cpu: "500m"
+      memory: "512Mi"
+
+windmill:
+  image:
+    repository: sogumai/windmill
+    tag: dev
+  replicaCount: 1
+  service:
+    type: ClusterIP
+    port: 7780
+  resources:
+    requests:
+      cpu: "200m"
+      memory: "256Mi"
+    limits:
+      cpu: "500m"
+      memory: "512Mi"

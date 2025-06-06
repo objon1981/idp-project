@@ -1,0 +1,5 @@
+apiVersion: v2
+name: service2
+description: A sub-chart for service2 service
+version: 0.1.0
+appVersion: "1.0"

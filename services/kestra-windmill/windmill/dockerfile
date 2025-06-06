@@ -1,0 +1,3 @@
+FROM windmill-labs/windmill:latest
+COPY config.json /app/config/config.json
+COPY scripts /app/scripts
