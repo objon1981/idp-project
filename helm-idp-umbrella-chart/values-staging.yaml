@@ -1,9 +1,185 @@
-service1:
-  replicaCount: 1
-  image:
-    tag: staging-latest
+global:
+  environment: staging
 
-service2:
-  replicaCount: 1
+common:
+  resources:
+    limits:
+      cpu: "750m"
+      memory: "1Gi"
+    requests:
+      cpu: "500m"
+      memory: "512Mi"
+
+ocr_service:
   image:
-    tag: staging-latest
+    repository: sogumai/ocr_service
+    tag: staging
+  replicaCount: 2
+  service:
+    type: ClusterIP
+    port: 8080
+  resources:
+    limits:
+      cpu: 400m
+      memory: 512Mi
+    requests:
+      cpu: 200m
+      memory: 256Mi
+
+docetl:
+  image:
+    repository: sogumai/docetl
+    tag: staging
+  replicaCount: 2
+  service:
+    type: ClusterIP
+    port: 5000
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 250m
+      memory: 256Mi
+
+local_file_organizer:
+  replicaCount: 2
+  image:
+    repository: sogumai/local_file_organizer
+    tag: staging
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 4000
+  resources:
+    limits:
+      cpu: 300m
+      memory: 512Mi
+    requests:
+      cpu: 150m
+      memory: 256Mi
+  healthCheck:
+    path: /health
+    port: 4000
+  config:
+    SCAN_DIR: "/app/data"
+    FILE_TYPES: "pdf,docx,jpg"
+
+anything_llm:
+  image:
+    repository: sogumai/anything_llm
+    tag: staging
+  replicaCount: 2
+  service:
+    type: ClusterIP
+    port: 3001
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 200m
+      memory: 256Mi
+
+json_crack:
+  image:
+    repository: sogumai/json_crack
+    tag: staging
+  replicaCount: 2
+  service:
+    type: ClusterIP
+    port: 3000
+  resources:
+    limits:
+      cpu: 250m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 256Mi
+
+local_send:
+  image:
+    repository: sogumai/local_send
+    tag: staging
+  replicaCount: 2
+  service:
+    type: ClusterIP
+    port: 5050
+  resources:
+    limits:
+      cpu: 250m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 256Mi
+
+pake:
+  image:
+    repository: sogumai/pake
+    tag: staging
+  replicaCount: 2
+  service:
+    type: ClusterIP
+    port: 8081
+    targetPort: 8081
+  resources:
+    limits:
+      cpu: 400m
+      memory: 512Mi
+    requests:
+      cpu: 150m
+      memory: 256Mi
+
+kestra:
+  image:
+    repository: sogumai/kestra
+    tag: staging
+  replicaCount: 2
+  service:
+    type: ClusterIP
+    port: 8082
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 200m
+      memory: 256Mi
+
+windmill:
+  image:
+    repository: sogumai/windmill
+    tag: staging
+  replicaCount: 2
+  service:
+    type: ClusterIP
+    port: 7780
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 200m
+      memory: 256Mi
+
+kafka_zookeeper:
+  enabled: true
+  kafka:
+    replicaCount: 2
+    persistence:
+      enabled: false
+  zookeeper:
+    replicaCount: 2
+    persistence:
+      enabled: false
+
+ingress:
+  enabled: true
+  className: nginx
+  annotations: {}
+  hosts:
+    - host: staging.sogum-idp.local
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []

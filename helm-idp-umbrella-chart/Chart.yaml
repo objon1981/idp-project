@@ -1,14 +1,46 @@
 apiVersion: v2
-name: intelligent-document-processing
-description: An umbrella Helm chart for Intelligent Document Processing
+name: sogum-umbrella
+description: "Umbrella Helm Chart for SOGUM Intelligent Document Processing Platform"
 type: application
 version: 0.1.0
 appVersion: "1.0"
 
+maintainers:
+  - name: John King
+    email: sogumint@gmail.com
+
+keywords:
+  - sogum
+  - document-processing
+  - helm
+  - umbrella
+
 dependencies:
-  - name: service1
+  - name: local_file_organizer
     version: 0.1.0
-    repository: "file://charts/service1"
-  - name: service2
+    repository: "file://charts/local_file_organizer"
+  - name: docetl
     version: 0.1.0
-    repository: "file://charts/service2"
+    repository: "file://charts/docetl"
+    condition: docetl.enabled
+  - name: anything_llm
+    version: 0.1.0
+    repository: "file://charts/anything_llm"
+  - name: ocr_service
+    version: 0.1.0
+    repository: "file://charts/ocr_service"
+  - name: json_crack
+    version: 0.1.0
+    repository: "file://charts/json_crack"
+  - name: kestra_windmill
+    version: 0.1.0
+    repository: "file://charts/kestra_windmill"
+  - name: local_send
+    version: 0.1.0
+    repository: "file://charts/local_send"
+  - name: pake
+    version: 0.1.0
+    repository: "file://charts/pake"
+  - name: kafka_zookeeper
+    version: 0.1.0
+    repository: "file://charts/kafka_zookeeper"

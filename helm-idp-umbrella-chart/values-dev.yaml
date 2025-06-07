@@ -1,9 +1,143 @@
-service1:
-  replicaCount: 1
-  image:
-    tag: dev-latest
+global:
+  environment: dev
 
-service2:
+common:
+  resources:
+    limits:
+      cpu: "500m"
+      memory: "512Mi"
+    requests:
+      cpu: "250m"
+      memory: "256Mi"
+
+ocr_service:
+  image:
+    repository: sogumai/ocr_service
+    tag: dev
+  replicaCount: 1
+  service:
+    type: ClusterIP
+    port: 8080
+  resources: {}
+
+docetl:
+  image:
+    repository: sogumai/docetl
+    tag: dev
+  replicaCount: 1
+  service:
+    type: ClusterIP
+    port: 5000
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 250m
+      memory: 256Mi
+
+local_file_organizer:
   replicaCount: 1
   image:
-    tag: dev-latest
+    repository: sogumai/local_file_organizer
+    tag: dev
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 4000
+  resources:
+    limits:
+      cpu: 200m
+      memory: 256Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+  healthCheck:
+    path: /health
+    port: 4000
+  config:
+    SCAN_DIR: "/app/data"
+    FILE_TYPES: "pdf,docx,jpg"
+
+anything_llm:
+  image:
+    repository: sogumai/anything_llm
+    tag: dev
+  replicaCount: 1
+  service:
+    type: ClusterIP
+    port: 3001
+  resources: {}
+
+json_crack:
+  image:
+    repository: sogumai/json_crack
+    tag: dev
+  replicaCount: 1
+  service:
+    type: ClusterIP
+    port: 3000
+  resources: {}
+
+local_send:
+  image:
+    repository: sogumai/local_send
+    tag: dev
+  replicaCount: 1
+  service:
+    type: ClusterIP
+    port: 5050
+  resources: {}
+
+pake:
+  image:
+    repository: sogumai/pake
+    tag: dev
+  replicaCount: 1
+  service:
+    type: ClusterIP
+    port: 8081
+    targetPort: 8081
+  resources: {}
+
+kestra:
+  image:
+    repository: sogumai/kestra
+    tag: dev
+  replicaCount: 1
+  service:
+    type: ClusterIP
+    port: 8082
+  resources: {}
+
+windmill:
+  image:
+    repository: sogumai/windmill
+    tag: dev
+  replicaCount: 1
+  service:
+    type: ClusterIP
+    port: 7780
+  resources: {}
+
+kafka_zookeeper:
+  enabled: true
+  kafka:
+    replicaCount: 1
+    persistence:
+      enabled: false
+  zookeeper:
+    replicaCount: 1
+    persistence:
+      enabled: false
+
+ingress:
+  enabled: true
+  className: nginx
+  annotations: {}
+  hosts:
+    - host: dev.sogum-idp.local
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
