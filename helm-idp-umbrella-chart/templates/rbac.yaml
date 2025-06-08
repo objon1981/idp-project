@@ -1,0 +1,25 @@
+# File: helm-idp-umbrella-chart/templates/rbac.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: sogum-idp-role
+  namespace: sogum-idp
+rules:
+  - apiGroups: [""]
+    resources: ["pods", "services", "configmaps", "secrets"]
+    verbs: ["get", "list", "watch"]
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: sogum-idp-rolebinding
+  namespace: sogum-idp
+subjects:
+  - kind: ServiceAccount
+    name: sogum-idp-sa
+roleRef:
+  kind: Role
+  name: sogum-idp-role
+  apiGroup: rbac.authorization.k8s.io

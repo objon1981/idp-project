@@ -1,0 +1,16 @@
+# Sample content for values-dev.yaml
+ocr-service:
+  image:
+    repository: your-dockerhub-username/ocr-service
+    tag: dev
+  replicaCount: 1
+  service:
+    type: ClusterIP
+    port: 8080
+  resources:
+    requests:
+      cpu: "50m"
+      memory: "64Mi"
+    limits:
+      cpu: "200m"
+      memory: "256Mi"

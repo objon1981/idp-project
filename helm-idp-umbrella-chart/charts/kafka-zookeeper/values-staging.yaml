@@ -1,0 +1,25 @@
+# Sample content for values-staging.yaml
+kafka_zookeeper:
+  enabled: true
+  kafka:
+    replicaCount: 2
+    persistence:
+      enabled: false
+    resources:
+      requests:
+        cpu: "400m"
+        memory: "512Mi"
+      limits:
+        cpu: "800m"
+        memory: "1Gi"
+  zookeeper:
+    replicaCount: 2
+    persistence:
+      enabled: false
+    resources:
+      requests:
+        cpu: "300m"
+        memory: "512Mi"
+      limits:
+        cpu: "600m"
+        memory: "1Gi"

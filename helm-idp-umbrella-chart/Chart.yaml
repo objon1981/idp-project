@@ -25,22 +25,22 @@ dependencies:
     condition: docetl.enabled
   - name: anything_llm
     version: 0.1.0
-    repository: "file://charts/anything_llm"
-  - name: ocr_service
+    repository: "file://charts/anything-llm"
+  - name: ocr-service
     version: 0.1.0
-    repository: "file://charts/ocr_service"
-  - name: json_crack
+    repository: "file://charts/ocr-service"
+  - name: json-crack
     version: 0.1.0
-    repository: "file://charts/json_crack"
-  - name: kestra_windmill
+    repository: "file://charts/json-crack"
+  - name: kestra-windmill
     version: 0.1.0
-    repository: "file://charts/kestra_windmill"
-  - name: local_send
+    repository: "file://charts/kestra-windmill"
+  - name: local-send
     version: 0.1.0
-    repository: "file://charts/local_send"
+    repository: "file://charts/local-send"
   - name: pake
     version: 0.1.0
     repository: "file://charts/pake"
-  - name: kafka_zookeeper
+  - name: kafka-zookeeper
     version: 0.1.0
-    repository: "file://charts/kafka_zookeeper"
+    repository: "file://charts/kafka-zookeeper"

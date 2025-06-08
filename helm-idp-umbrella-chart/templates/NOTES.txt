@@ -1,0 +1,10 @@
+# File: helm-idp-umbrella-chart/templates/NOTES.txt
+Thank you for installing SOGUM IDP Umbrella Chart!
+
+Your application has been deployed to the namespace: `sogum-idp`.
+
+You can access services via the ingress:
+
+  http://{{ (index .Values.ingress.hosts 0).host }}
+
+Run `kubectl get all -n sogum-idp` to see the deployed resources.

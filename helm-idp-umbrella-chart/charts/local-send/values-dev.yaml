@@ -1,0 +1,16 @@
+# Sample content for values-dev.yaml
+local-send:
+  image:
+    repository: sogumai/local_send
+    tag: dev
+  replicaCount: 1
+  service:
+    type: ClusterIP
+    port: 5050
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "128Mi"
+    limits:
+      cpu: "200m"
+      memory: "256Mi"

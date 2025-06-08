@@ -1,0 +1,16 @@
+# Sample content for values-staging.yaml
+local-file-organizer:
+  image:
+    repository: sogumai/local_file_organizer
+    tag: staging
+  replicaCount: 2
+  service:
+    type: ClusterIP
+    port: 4000
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "128Mi"
+    limits:
+      cpu: "250m"
+      memory: "384Mi"

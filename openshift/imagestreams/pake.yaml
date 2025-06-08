@@ -1,0 +1,13 @@
+apiVersion: image.openshift.io/v1
+kind: ImageStream
+metadata:
+  name: pake
+  namespace: sogum-ai
+spec:
+  tags:
+    - name: latest
+      from:
+        kind: DockerImage
+        name: sogumai/pake:latest
+      importPolicy:
+        scheduled: true

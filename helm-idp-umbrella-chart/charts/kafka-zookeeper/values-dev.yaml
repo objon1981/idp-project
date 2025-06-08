@@ -1,0 +1,25 @@
+# Sample content for values-dev.yaml
+kafka_zookeeper:
+  enabled: true
+  kafka:
+    replicaCount: 1
+    persistence:
+      enabled: false
+    resources:
+      requests:
+        cpu: "300m"
+        memory: "256Mi"
+      limits:
+        cpu: "600m"
+        memory: "512Mi"
+  zookeeper:
+    replicaCount: 1
+    persistence:
+      enabled: false
+    resources:
+      requests:
+        cpu: "200m"
+        memory: "256Mi"
+      limits:
+        cpu: "500m"
+        memory: "512Mi"

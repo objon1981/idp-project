@@ -1,0 +1,32 @@
+# Sample content for values-staging.yaml
+kestra:
+  image:
+    repository: sogumai/kestra
+    tag: staging
+  replicaCount: 2
+  service:
+    type: ClusterIP
+    port: 8082
+  resources:
+    requests:
+      cpu: "300m"
+      memory: "512Mi"
+    limits:
+      cpu: "700m"
+      memory: "1Gi"
+
+windmill:
+  image:
+    repository: sogumai/windmill
+    tag: staging
+  replicaCount: 2
+  service:
+    type: ClusterIP
+    port: 7780
+  resources:
+    requests:
+      cpu: "300m"
+      memory: "512Mi"
+    limits:
+      cpu: "700m"
+      memory: "1Gi"

@@ -1,0 +1,32 @@
+# Sample content for values-prod.yaml
+kestra:
+  image:
+    repository: sogumai/kestra
+    tag: latest
+  replicaCount: 3
+  service:
+    type: ClusterIP
+    port: 8082
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "1Gi"
+    limits:
+      cpu: "2"
+      memory: "2Gi"
+
+windmill:
+  image:
+    repository: sogumai/windmill
+    tag: latest
+  replicaCount: 3
+  service:
+    type: ClusterIP
+    port: 7780
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "1Gi"
+    limits:
+      cpu: "2"
+      memory: "2Gi"

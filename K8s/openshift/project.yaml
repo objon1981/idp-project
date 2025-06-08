@@ -1,0 +1,9 @@
+apiVersion: project.openshift.io/v1
+kind: Project
+metadata:
+  name: sogum-ai
+  labels:
+    name: sogum-ai
+    environment: dev  # change to prod or staging accordingly
+  annotations:
+    description: "Project for Sogum AI services"

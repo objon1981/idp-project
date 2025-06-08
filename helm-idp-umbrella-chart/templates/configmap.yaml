@@ -1,0 +1,9 @@
+# File: helm-idp-umbrella-chart/templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: sogum-idp-global-config
+  namespace: sogum-idp
+data:
+  SCAN_DIR: {{ .Values.local_file_organizer.config.SCAN_DIR | quote }}
+  FILE_TYPES: {{ .Values.local_file_organizer.config.FILE_TYPES | quote }}

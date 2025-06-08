@@ -1,4 +1,7 @@
 # Sample content for values.yaml
+
+fullnameOverride: sogum-idp
+
 global:
   environment: default
 
@@ -30,12 +33,12 @@ docetl:
     type: ClusterIP
     port: 5000
   resources:
-  limits:
-    cpu: 500m
-    memory: 512Mi
-  requests:
-    cpu: 250m
-    memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 250m
+      memory: 256Mi
 
 local_file_organizer:
   replicaCount: 1
@@ -59,7 +62,6 @@ local_file_organizer:
   config:
     SCAN_DIR: "/app/data"
     FILE_TYPES: "pdf,docx,jpg"
-
 
 anything_llm:
   image:
@@ -127,19 +129,39 @@ kafka_zookeeper:
   kafka:
     replicaCount: 1
     persistence:
-      enabled: false
+      enabled: true
+      storageClass: "ocs-storagecluster-ceph-rbd"  # OKD default storage class example
+      size: 10Gi
   zookeeper:
     replicaCount: 1
     persistence:
-      enabled: false
+      enabled: true
+      storageClass: "ocs-storagecluster-ceph-rbd"
+      size: 10Gi
 
 ingress:
+  enabled: false    # disable ingress for OKD
+
+route:
   enabled: true
-  className: nginx
-  annotations: {}
-  hosts:
-    - host: sogum-idp.local
-      paths:
-        - path: /
-          pathType: Prefix
-  tls: []
+  host: sogum-idp.local
+  tls:
+    enabled: false
+    termination: edge
+
+openshift:
+  enabled: false
+  host: ""  # Optional: Override host for Route
+  annotations: {}  # Optional: Add annotations like cert-manager.io if needed
+
+podSecurityContext:
+  runAsUser: 1000
+  fsGroup: 1000
+
+containerSecurityContext:
+  runAsNonRoot: true
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+      - ALL
+

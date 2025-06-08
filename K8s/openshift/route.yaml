@@ -1,0 +1,13 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: pake
+  namespace: sogum-ai
+spec:
+  to:
+    kind: Service
+    name: pake
+  port:
+    targetPort: 8081
+  tls:
+    termination: edge
