@@ -1,9 +1,9 @@
 import os
-import pandas as pd
-from loguru import logger
-from pdfminer.high_level import extract_text
-from docx import Document
-import yaml
+import pandas as pd # type: ignore
+from loguru import logger # type: ignore
+from pdfminer.high_level import extract_text # type: ignore
+from docx import Document # type: ignore
+import yaml # type: ignore
 
 def load_config(path="config.yaml"):
     with open(path, 'r') as f:

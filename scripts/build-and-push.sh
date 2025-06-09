@@ -4,7 +4,7 @@
 set -e  # Exit immediately if a command exits with a non-zero status
 
 # Set your DockerHub username or organization
-DOCKER_USER="your-dockerhub-username"
+DOCKER_USER="sogumai"
 
 # Define all services
 SERVICES=(
