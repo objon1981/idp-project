@@ -1,0 +1,15 @@
+
+# Ignore model binaries
+kaggle/*.gguf
+kaggle/models/
+kaggle/llama.cpp/
+
+# Jupyter checkpoint files
+.ipynb_checkpoints/
+
+# __pycache__ folders
+__pycache__/
+
+# VS Code & Codespaces files
+.vscode/
+*.code-workspace
