@@ -1,20 +1,22 @@
-# Sample content for Dockerfile
-FROM node:20-alpine
+FROM ollama/ollama:latest
+
+# Install Node.js and dependencies
+RUN apk add --no-cache nodejs npm
 
 # Set working directory
 WORKDIR /app
 
-# Install dependencies
+# Copy dependencies and install
 COPY package*.json ./
 RUN npm install
 
-# Copy application code
+# Copy app files
 COPY . .
 
 # Environment config
 COPY config/anything-llm.env .env
 
-# Entrypoint
+# Entrypoint script
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 

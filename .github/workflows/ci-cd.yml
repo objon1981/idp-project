@@ -6,15 +6,12 @@ on:
       - main
 
 jobs:
-  build-and-deploy:
+  build-and-push:
     runs-on: ubuntu-latest
 
-    env:
-      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
-      SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-      SSH_USER: ${{ secrets.SSH_USER }}
-      SSH_HOST: ${{ secrets.SSH_HOST }}
+    strategy:
+      matrix:
+        service: [ocr-service, docetl, local-file-organizer, anything-llm, json-crack, local-send, pake, kestra, windmill]
 
     steps:
       - name: Checkout Repository
@@ -24,39 +21,81 @@ jobs:
         uses: docker/setup-buildx-action@v2
 
       - name: Log in to Docker Hub
-        if: env.DOCKERHUB_USERNAME != '' && env.DOCKERHUB_TOKEN != ''
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and Push Docker Images
+      - name: Build and Push ${{ matrix.service }}
         run: |
-          services=(ocr-service docetl local-file-organizer anything-llm json-crack local-send pake kestra windmill)
-          for service in "${services[@]}"; do
-            docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/$service:latest ./services/$service
-            docker push ${{ secrets.DOCKERHUB_USERNAME }}/$service:latest
-          done
+          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.service }}:latest ./services/${{ matrix.service }}
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.service }}:latest
 
+  deploy:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+
+    env:
+      SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      SSH_USER: ${{ secrets.SSH_USER }}
+      SSH_HOST: ${{ secrets.SSH_HOST }}
+
+    steps:
       - name: Set up SSH Agent
-        if: env.SSH_PRIVATE_KEY != ''
         uses: webfactory/ssh-agent@v0.5.4
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-      - name: Deploy via SSH to OKD On-Prem Server
-        if: env.SSH_PRIVATE_KEY != '' && env.SSH_USER != '' && env.SSH_HOST != ''
+      - name: Deploy with Rollback Logic
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
+            set -e
+
             cd /opt/sogum-umbrella
+            echo "Updating Helm dependencies..."
+            helm dependency update || exit 1
 
-            # Pull latest Helm dependencies
-            helm dependency update
+            echo "Deploying chart..."
+            if helm upgrade --install sogum-idp . -f values.yaml; then
+              echo "Deployment succeeded"
+            else
+              echo "Deployment failed, attempting rollback..."
+              helm rollback sogum-idp 0 || echo "Rollback failed"
+              exit 1
+            fi
 
-            # Deploy or upgrade the umbrella chart
-            helm upgrade --install sogum-idp . -f values.yaml
+            echo "Checking deployment rollout statuses..."
+            for deployment in sogum-idp-kestra sogum-idp-windmill; do
+              if ! kubectl rollout status deployment/$deployment --timeout=60s; then
+                echo "Rollout failed for $deployment, rolling back..."
+                helm rollback sogum-idp 0 || echo "Rollback failed"
+                exit 1
+              fi
+            done
 
-            # Confirm deployment status with OKD CLI
-            oc rollout status deployment/sogum-idp-kestra
-            oc rollout status deployment/sogum-idp-windmill
+            echo "✅ Deployment successful"
           EOF
+
+      - name: Notify on Success
+        if: success()
+        uses: slackapi/slack-github-action@v1.24.0
+        with:
+          payload: |
+            {
+              "channel": "#deployments",
+              "text": ":rocket: *Deployment Successful* for SOGUM AI Services on branch `${{ github.ref_name }}`"
+            }
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+
+      - name: Notify on Failure
+        if: failure()
+        uses: slackapi/slack-github-action@v1.24.0
+        with:
+          payload: |
+            {
+              "channel": "#deployments",
+              "text": ":x: *Deployment Failed* for SOGUM AI Services on branch `${{ github.ref_name }}`. Rollback attempted."
+            }
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
