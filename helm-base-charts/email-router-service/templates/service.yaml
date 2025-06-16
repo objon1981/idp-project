@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "email-router-service.fullname" . }}
+  labels:
+    {{- include "email-router-service.labels" . | nindent 4 }}
+    app.kubernetes.io/name: {{ include "email-router-service.name" . }}
+spec:
+  type: {{ .Values.service.type | default "ClusterIP" }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "email-router-service.selectorLabels" . | nindent 4 }}

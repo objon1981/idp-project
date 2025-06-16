@@ -13,3 +13,6 @@ __pycache__/
 # VS Code & Codespaces files
 .vscode/
 *.code-workspace
+act_Linux_x86_64.tar.gz
+.secrets/
+.secrets/

@@ -1,0 +1,5 @@
+# requirements.txt
+Flask
+imapclient
+email-validator
+python-dotenv
