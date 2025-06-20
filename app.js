@@ -12,12 +12,79 @@ const services = {
     'email-router': { name: 'Email Router', port: 5001 }
 };
 
+// Add missing functions
+function addMessage(message, sender) {
+    const chatMessages = document.getElementById('chatMessages');
+    if (!chatMessages) return;
+    
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `message ${sender}`;
+    messageDiv.textContent = message;
+    chatMessages.appendChild(messageDiv);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+function displayWelcomeMessage() {
+    const chatMessages = document.getElementById('chatMessages');
+    if (chatMessages && chatMessages.children.length === 0) {
+        addMessage('Welcome to SOGUM AI! All microservices are currently offline. Please start the individual services to enable full functionality.', 'ai');
+    }
+}
+
+function showServiceDetails(service) {
+    const serviceInfo = services[service];
+    if (serviceInfo) {
+        alert(`Service: ${serviceInfo.name}\nPort: ${serviceInfo.port}\nStatus: Currently checking...`);
+    }
+}
+
+async function testService(serviceKey, port) {
+    const button = event.target;
+    const originalText = button.textContent;
+    button.textContent = 'Testing...';
+    button.disabled = true;
+    
+    try {
+        let result = false;
+        if (serviceKey === 'llm') {
+            result = await testLLMService(port);
+        } else if (serviceKey === 'ocr') {
+            result = await testOCRService(port);
+        } else {
+            result = await testGenericService(port);
+        }
+        
+        if (result) {
+            alert(`✅ ${services[serviceKey].name} is responding correctly!`);
+        } else {
+            alert(`❌ ${services[serviceKey].name} is not responding. Please ensure the service is running on port ${port}.`);
+        }
+    } catch (error) {
+        alert(`❌ Error testing ${services[serviceKey].name}: ${error.message}`);
+    } finally {
+        button.textContent = originalText;
+        button.disabled = false;
+    }
+}
+
 // Initialize the dashboard
 document.addEventListener('DOMContentLoaded', function() {
     checkAllServices();
     setupEventListeners();
     displayWelcomeMessage();
+    
+    // Update system status
+    updateSystemStatus();
 });
+
+function updateSystemStatus() {
+    const systemStatus = document.getElementById('systemStatus');
+    if (systemStatus) {
+        systemStatus.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Services Offline';
+        systemStatus.style.background = 'rgba(239, 68, 68, 0.1)';
+        systemStatus.style.color = '#ef4444';
+    }
+}
 
 function setupEventListeners() {
     // Chat input handling
@@ -49,15 +116,35 @@ async function checkAllServices() {
 
 async function checkServiceStatus(serviceKey, port) {
     const statusElement = document.getElementById(`${serviceKey}-status`);
+    if (!statusElement) return;
+    
     const statusDot = statusElement.querySelector('.status-dot');
     const statusText = statusElement.querySelector('.status-text');
 
     try {
-        // Try to check if service is responding
+        // Try to check if service is responding with timeout
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 2000);
+        
         const response = await fetch(`http://0.0.0.0:${port}/health`, {
             method: 'GET',
-            timeout: 5000
-        }).catch(() => null);
+            signal: controller.signal
+        });
+        
+        clearTimeout(timeoutId);
+        
+        if (response.ok) {
+            statusDot.className = 'status-dot online';
+            statusText.textContent = 'Online';
+        } else {
+            statusDot.className = 'status-dot offline';
+            statusText.textContent = 'Service Error';
+        }
+    } catch (error) {
+        // Service is offline or unreachable
+        statusDot.className = 'status-dot offline';
+        statusText.textContent = 'Offline';
+    }
 
         if (response && response.ok) {
             statusDot.classList.add('online');
@@ -107,6 +194,9 @@ async function testService(serviceKey, port) {
 
 async function testLLMService(port) {
     try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 3000);
+        
         const response = await fetch(`http://0.0.0.0:${port}/ask`, {
             method: 'POST',
             headers: {
@@ -114,28 +204,48 @@ async function testLLMService(port) {
             },
             body: JSON.stringify({
                 prompt: 'Hello, this is a test message. Please respond briefly.'
-            })
+            }),
+            signal: controller.signal
         });
+        
+        clearTimeout(timeoutId);
         return response.ok;
     } catch (error) {
+        console.log(`LLM service test failed on port ${port}:`, error.message);
         return false;
     }
 }
 
 async function testOCRService(port) {
     try {
-        const response = await fetch(`http://0.0.0.0:${port}/health`);
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 3000);
+        
+        const response = await fetch(`http://0.0.0.0:${port}/health`, {
+            signal: controller.signal
+        });
+        
+        clearTimeout(timeoutId);
         return response.ok;
     } catch (error) {
+        console.log(`OCR service test failed on port ${port}:`, error.message);
         return false;
     }
 }
 
 async function testGenericService(port) {
     try {
-        const response = await fetch(`http://0.0.0.0:${port}/health`);
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 3000);
+        
+        const response = await fetch(`http://0.0.0.0:${port}/health`, {
+            signal: controller.signal
+        });
+        
+        clearTimeout(timeoutId);
         return response.ok;
     } catch (error) {
+        console.log(`Generic service test failed on port ${port}:`, error.message);
         return false;
     }
 }
@@ -157,6 +267,37 @@ async function sendMessage() {
     typingDiv.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> AI is thinking...';
     chatMessages.appendChild(typingDiv);
     chatMessages.scrollTop = chatMessages.scrollHeight;
+
+    try {
+        // Try to send message to LLM service
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000);
+        
+        const response = await fetch('http://0.0.0.0:3001/ask', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                prompt: message
+            }),
+            signal: controller.signal
+        });
+        
+        clearTimeout(timeoutId);
+        
+        if (response.ok) {
+            const data = await response.json();
+            chatMessages.removeChild(typingDiv);
+            addMessage(data.response || 'AI response received', 'ai');
+        } else {
+            throw new Error('Service unavailable');
+        }
+    } catch (error) {
+        chatMessages.removeChild(typingDiv);
+        addMessage('Sorry, the AI service is currently unavailable. All microservices need to be started first.', 'ai');
+    }
+}
 
     try {
         // Try to send to LLM service
