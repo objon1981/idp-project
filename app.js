@@ -1,4 +1,3 @@
-
 // Service monitoring and interaction
 const services = {
     ocr: { port: 8080, name: 'OCR Service' },
@@ -9,7 +8,8 @@ const services = {
     kestra: { port: 8082, name: 'Kestra' },
     windmill: { port: 7780, name: 'Windmill' },
     localsend: { port: 5050, name: 'Local Send' },
-    pake: { port: 8081, name: 'PAKE Security' }
+    pake: { port: 8081, name: 'PAKE Security' },
+    'email-router': { name: 'Email Router', port: 5001 }
 };
 
 // Initialize the dashboard

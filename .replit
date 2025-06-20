@@ -19,6 +19,15 @@ mode = "sequential"
 task = "shell.exec"
 args = "python -m http.server 5000 --bind 0.0.0.0"
 
+[[workflows.workflow]]
+name = "Start Email Router"
+author = 44043869
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd services/email-router-service && python main.py"
+
 [[ports]]
 localPort = 5000
 externalPort = 80
