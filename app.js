@@ -1,7 +1,7 @@
 // Service status checking functionality
 const services = [
     { id: 'ocr', name: 'OCR Service', port: 8080, endpoint: '/health' },
-    { id: 'docetl', name: 'DocETL', port: 5000, endpoint: '/health' },
+    { id: 'docetl', name: 'DocETL', port: 5001, endpoint: '/health' },
     { id: 'file-organizer', name: 'File Organizer', port: 4000, endpoint: '/health' },
     { id: 'anything-llm', name: 'AnythingLLM', port: 3001, endpoint: '/health' },
     { id: 'json-crack', name: 'JSON Crack', port: 3000, endpoint: '/health' },

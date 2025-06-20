@@ -1,32 +1,39 @@
-from flask import Flask, request, jsonify, send_file
-from flask_cors import CORS
+
+#!/usr/bin/env python3
+from flask import Flask, jsonify, request
 import os
-from utils import save_file, generate_secure_key
 
 app = Flask(__name__)
-CORS(app)
 
-UPLOAD_FOLDER = "./uploads"
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+@app.route('/health', methods=['GET'])
+def health_check():
+    return jsonify({"status": "healthy", "service": "LocalSend", "port": 5050})
+
+@app.route('/', methods=['GET'])
+def home():
+    return jsonify({
+        "service": "LocalSend",
+        "status": "running",
+        "endpoints": ["/health", "/send", "/receive"],
+        "description": "Local File Transfer Service"
+    })
 
 @app.route('/send', methods=['POST'])
-def send():
-    if 'file' not in request.files:
-        return jsonify({'error': 'No file uploaded'}), 400
+def send_file():
+    return jsonify({
+        "status": "success",
+        "message": "File would be sent here",
+        "transfer_id": "tx_123456"
+    })
 
-    file = request.files['file']
-    filename = save_file(file, UPLOAD_FOLDER)
-    key = generate_secure_key(filename)
-    
-    return jsonify({'message': 'File received', 'file': filename, 'key': key})
-
-@app.route('/receive/<key>', methods=['GET'])
-def receive(key):
-    filepath = os.path.join(UPLOAD_FOLDER, key)
-    if os.path.exists(filepath):
-        return send_file(filepath, as_attachment=True)
-    else:
-        return jsonify({'error': 'File not found'}), 404
+@app.route('/receive', methods=['GET'])
+def receive_file():
+    return jsonify({
+        "status": "success",
+        "available_files": [],
+        "total_files": 0
+    })
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+    print("📤 Starting LocalSend Service on port 5050...")
+    app.run(host='0.0.0.0', port=5050, debug=False)

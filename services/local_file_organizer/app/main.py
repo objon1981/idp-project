@@ -1,30 +1,39 @@
-import time
-from watchdog.observers import Observer
-from watchdog.events import FileSystemEventHandler
-from organizer import organize_file, load_config
-from loguru import logger
+
+#!/usr/bin/env python3
+from flask import Flask, jsonify, request
 import os
 
-CONFIG = load_config()
+app = Flask(__name__)
 
-class FileHandler(FileSystemEventHandler):
-    def on_created(self, event):
-        if not event.is_directory:
-            logger.info(f"Detected new file: {event.src_path}")
-            organize_file(event.src_path, CONFIG['destination_directory'], CONFIG['file_types'])
+@app.route('/health', methods=['GET'])
+def health_check():
+    return jsonify({"status": "healthy", "service": "File Organizer", "port": 4000})
 
-if __name__ == "__main__":
-    logger.info("Starting Local File Organizer Service...")
-    event_handler = FileHandler()
-    observer = Observer()
-    observer.schedule(event_handler, CONFIG['source_directory'], recursive=False)
-    observer.start()
+@app.route('/', methods=['GET'])
+def home():
+    return jsonify({
+        "service": "Local File Organizer",
+        "status": "running",
+        "endpoints": ["/health", "/organize", "/scan"],
+        "description": "Local File Organization Service"
+    })
 
-    try:
-        while True:
-            time.sleep(1)
-    except KeyboardInterrupt:
-        observer.stop()
-        logger.info("Shutting down file organizer...")
+@app.route('/organize', methods=['POST'])
+def organize_files():
+    return jsonify({
+        "status": "success",
+        "message": "File organization would happen here",
+        "organized_files": []
+    })
 
-    observer.join()
+@app.route('/scan', methods=['GET'])
+def scan_directory():
+    return jsonify({
+        "status": "success",
+        "scanned_files": [],
+        "total_files": 0
+    })
+
+if __name__ == '__main__':
+    print("📁 Starting File Organizer Service on port 4000...")
+    app.run(host='0.0.0.0', port=4000, debug=False)

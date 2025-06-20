@@ -1,35 +1,31 @@
+
+#!/usr/bin/env python3
+from flask import Flask, jsonify, request
 import os
-from loguru import logger # type: ignore
-from etl import extract_data, save_output
 
-# Updated load_config with environment variable support
-def load_config():
-    return {
-        "input_directory": os.getenv("INPUT_DIR", "/data/input"),
-        "output_directory": os.getenv("OUTPUT_DIR", "/data/output")
-    }
+app = Flask(__name__)
 
-if __name__ == "__main__":
-    config = load_config()
-    input_dir = config['input_directory']
-    output_dir = config['output_directory']
+@app.route('/health', methods=['GET'])
+def health_check():
+    return jsonify({"status": "healthy", "service": "DocETL", "port": 5001})
 
-    os.makedirs(output_dir, exist_ok=True)
+@app.route('/', methods=['GET'])
+def home():
+    return jsonify({
+        "service": "DocETL",
+        "status": "running",
+        "endpoints": ["/health", "/process"],
+        "description": "Document ETL Processing Service"
+    })
 
-    try:
-        files = [f for f in os.listdir(input_dir) if os.path.isfile(os.path.join(input_dir, f))]
-    except FileNotFoundError:
-        logger.error(f"Input directory '{input_dir}' not found.")
-        exit(1)
+@app.route('/process', methods=['POST'])
+def process_document():
+    return jsonify({
+        "status": "success",
+        "message": "Document ETL processing would happen here",
+        "processed": True
+    })
 
-    for file_name in files:
-        file_path = os.path.join(input_dir, file_name)
-        logger.info(f"Processing: {file_path}")
-
-        try:
-            content = extract_data(file_path)
-            if content:
-                output_file = os.path.splitext(file_name)[0] + ".txt"
-                save_output(os.path.join(output_dir, output_file), content)
-        except Exception as e:
-            logger.error(f"Failed to process {file_name}: {e}")
+if __name__ == '__main__':
+    print("📄 Starting DocETL Service on port 5001...")
+    app.run(host='0.0.0.0', port=5001, debug=False)

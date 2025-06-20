@@ -28,6 +28,15 @@ mode = "sequential"
 task = "shell.exec"
 args = "cd services/email-router-service && python main.py"
 
+[[workflows.workflow]]
+name = "Start All Microservices"
+author = 44043869
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python main_service_runner.py"
+
 [[ports]]
 localPort = 5000
 externalPort = 80

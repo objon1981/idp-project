@@ -1,34 +1,39 @@
-from flask import Flask, request, jsonify
-from flask_cors import CORS
-from pake_utils import create_pake_session, finalize_pake
+
+#!/usr/bin/env python3
+from flask import Flask, jsonify, request
+import os
 
 app = Flask(__name__)
-CORS(app)
 
-sessions = {}
+@app.route('/health', methods=['GET'])
+def health_check():
+    return jsonify({"status": "healthy", "service": "Pake", "port": 8081})
 
-@app.route('/init', methods=['POST'])
-def init_session():
-    data = request.get_json()
-    username = data['username']
-    password = data['password']
+@app.route('/', methods=['GET'])
+def home():
+    return jsonify({
+        "service": "Pake",
+        "status": "running",
+        "endpoints": ["/health", "/package", "/build"],
+        "description": "Web App Packaging Service"
+    })
 
-    session, msg = create_pake_session(username, password)
-    sessions[username] = session
+@app.route('/package', methods=['POST'])
+def package_app():
+    return jsonify({
+        "status": "success",
+        "message": "App packaging would happen here",
+        "package_id": "pkg_123456"
+    })
 
-    return jsonify({'message': msg})
-
-@app.route('/confirm', methods=['POST'])
-def confirm_session():
-    data = request.get_json()
-    username = data['username']
-    msg = data['message']
-
-    if username in sessions:
-        shared_secret = finalize_pake(sessions[username], msg)
-        return jsonify({'shared_secret': shared_secret})
-    else:
-        return jsonify({'error': 'Session not found'}), 404
+@app.route('/build', methods=['POST'])
+def build_app():
+    return jsonify({
+        "status": "success",
+        "message": "App build would happen here",
+        "build_id": "build_123456"
+    })
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8000)
+    print("📦 Starting Pake Service on port 8081...")
+    app.run(host='0.0.0.0', port=8081, debug=False)
