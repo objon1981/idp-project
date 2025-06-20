@@ -1,0 +1,8 @@
+modules = ["python-3.12", "bash", "nodejs-20"]
+run = "create a web page for the App"
+
+[nix]
+channel = "stable-24_05"
+
+[deployment]
+run = ["sh", "-c", "create a web page for the App"]
