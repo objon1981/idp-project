@@ -13,13 +13,23 @@ const services = [
 
 async function checkServiceHealth(service) {
     try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 5000);
+        
         const response = await fetch(`http://localhost:${service.port}${service.endpoint}`, {
             method: 'GET',
-            timeout: 5000
+            signal: controller.signal
         });
+        
+        clearTimeout(timeoutId);
         return response.ok;
     } catch (error) {
-        console.log(`Service ${service.name} is not responding:`, error.message);
+        // Only log once per service to avoid spam
+        if (!window.serviceErrorLogged) window.serviceErrorLogged = {};
+        if (!window.serviceErrorLogged[service.name]) {
+            console.log(`Service ${service.name} is not responding:`, error.message);
+            window.serviceErrorLogged[service.name] = true;
+        }
         return false;
     }
 }
