@@ -4,16 +4,52 @@ description: "Umbrella Helm Chart for SOGUM Intelligent Document Processing Plat
 type: application
 version: 0.1.0
 appVersion: "1.0"
+home: https://github.com/your-org/sogum-platform
+sources:
+  - https://github.com/your-org/sogum-platform
+icon: https://raw.githubusercontent.com/your-org/sogum-platform/main/assets/logo.png
 
 maintainers:
   - name: John King
     email: sogumint@gmail.com
+    url: https://github.com/johnking
 
 keywords:
   - sogum
   - document-processing
   - helm
   - umbrella
+  - ai
+  - llm
+  - ocr
+  - etl
+  - microservices
+  - kubernetes
+
+annotations:
+  artifacthub.io/license: Apache-2.0
+  artifacthub.io/operator: "false"
+  artifacthub.io/prerelease: "true"
+  artifacthub.io/containsSecurityUpdates: "false"
+  artifacthub.io/changes: |
+    - Initial release
+    - Support for multiple document processing services
+    - Integrated AI/LLM capabilities
+    - OCR and ETL pipeline support
+  artifacthub.io/images: |
+    - name: anything-llm
+      image: sogumai/anything_llm:latest
+    - name: docetl
+      image: sogumai/docetl:latest
+    - name: ocr-service
+      image: sogumai/ocr_service:latest
+    - name: local-file-organizer
+      image: sogumai/local_file_organizer:latest
+  artifacthub.io/links: |
+    - name: Documentation
+      url: https://docs.sogum.ai
+    - name: Support
+      url: https://github.com/your-org/sogum-platform/issues
 
 dependencies:
   - name: local_file_organizer
