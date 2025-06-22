@@ -1,0 +1,133 @@
+version: '3.8'
+
+services:
+  anything-llm:
+    build: ./services/anything-llm
+    container_name: anything-llm
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=production
+      - OLLAMA_HOST=http://localhost:11434
+      - LOG_LEVEL=info
+      - ALLOWED_ORIGINS=http://localhost:3000,http://localhost:8080
+    volumes:
+      - anything_llm_data:/app/data
+      - ./logs:/app/logs
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  docetl:
+    build: ./services/docetl
+    container_name: docetl
+    volumes:
+      - ./data/input:/data/input
+      - ./data/output:/data/output
+      - ./logs:/app/logs
+    environment:
+      - INPUT_DIR=/data/input
+      - OUTPUT_DIR=/data/output
+      - LOG_LEVEL=INFO
+    ports:
+      - "8000:8000"  # Metrics port
+    restart: unless-stopped
+
+  ocr-service:
+    build: ./services/ocr-service
+    container_name: ocr-service
+    ports:
+      - "5001:5001"
+    volumes:
+      - ./logs:/app/logs
+    environment:
+      - FLASK_ENV=production
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  local-send:
+    build: ./services/local-send
+    container_name: local-send
+    ports:
+      - "5000:5000"
+    volumes:
+      - local_send_uploads:/app/uploads
+      - ./logs:/app/logs
+    restart: unless-stopped
+
+  json-crack:
+    build: ./services/json-crack
+    container_name: json-crack
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+
+  email-router:
+    build: ./services/email-router-service
+    container_name: email-router
+    environment:
+      - EMAIL_USER=${EMAIL_USER}
+      - EMAIL_PASS=${EMAIL_PASS}
+      - ROUTING_RULES=ocr,json-crack
+    restart: unless-stopped
+
+  file-organizer:
+    build: ./services/local_file_organizer
+    container_name: file-organizer
+    volumes:
+      - ./data/watched:/watched
+      - ./data/organized:/organized
+      - ./logs:/app/logs
+    restart: unless-stopped
+
+  pake-service:
+    build: ./services/pake
+    container_name: pake-service
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--web.enable-lifecycle'
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3010:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin123
+    volumes:
+      - grafana_data:/var/lib/grafana
+    restart: unless-stopped
+
+volumes:
+  anything_llm_data:
+  local_send_uploads:
+  prometheus_data:
+  grafana_data:
+
+networks:
+  default:
+    driver: bridge

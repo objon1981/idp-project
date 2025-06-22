@@ -1,25 +1,34 @@
-FROM ollama/ollama:latest
+FROM ollama/ollama:0.3.0
 
-# Install Node.js and dependencies
-RUN apk add --no-cache nodejs npm
+# Install Node.js and system dependencies
+RUN apt-get update && apt-get install -y \
+    nodejs \
+    npm \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
 
-# Set working directory
+# Create non-root user
+RUN useradd -m -u 1001 appuser
+
 WORKDIR /app
 
-# Copy dependencies and install
+# Copy package files and install dependencies
 COPY package*.json ./
-RUN npm install
+RUN npm ci --only=production && npm cache clean --force
 
-# Copy app files
+# Copy application files
 COPY . .
-
-# Environment config
 COPY config/anything-llm.env .env
 
-# Entrypoint script
-COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
+# Set proper permissions
+RUN chown -R appuser:appuser /app
+RUN chmod +x entrypoint.sh
+
+USER appuser
 
 EXPOSE 3001
 
-CMD ["/entrypoint.sh"]
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+  CMD curl -f http://localhost:3001/health || exit 1
+
+CMD ["./entrypoint.sh"]

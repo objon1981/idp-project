@@ -1,35 +1,39 @@
-FROM python:3.9-slim
+FROM python:3.11-slim
 
-# Install system dependencies for EasyOCR
+# Install system dependencies
 RUN apt-get update && apt-get install -y \
-    libglib2.0-0 \
+    tesseract-ocr \
+    tesseract-ocr-eng \
     libsm6 \
     libxext6 \
     libxrender-dev \
-    libgomp1 \
-    libgl1-mesa-glx \
-    libgthread-2.0-0 \
-    libgtk-3-0 \
-    libavcodec-dev \
-    libavformat-dev \
-    libswscale-dev \
+    libfontconfig1 \
+    libglib2.0-0 \
+    poppler-utils \
     && rm -rf /var/lib/apt/lists/*
 
-# Set working directory
+# Create non-root user
+RUN useradd -m -u 1001 appuser
+
 WORKDIR /app
 
 # Copy requirements and install dependencies
 COPY app/requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt
 
-# Copy application code
+# Copy application
 COPY app/ .
 
-# Copy models directory if needed
-COPY models/ ./models/
+# Create necessary directories and set permissions
+RUN mkdir -p logs temp && \
+    chown -R appuser:appuser /app
 
-# Expose port
-EXPOSE 5000
+USER appuser
 
-# Run the application
-CMD ["python", "main.py"]
+EXPOSE 5001
+
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+  CMD curl -f http://localhost:5001/health || exit 1
+
+CMD ["gunicorn", "--bind", "0.0.0.0:5001", "--workers", "2", "--timeout", "120", "main:app"]
