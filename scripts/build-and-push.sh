@@ -14,7 +14,7 @@ SERVICES=(
   anything-llm
   json-crack
   local-send
-  pake
+  spake
   kestra
   windmill
 )

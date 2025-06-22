@@ -1,6 +1,6 @@
 
 #!/usr/bin/env python3
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request # type: ignore
 import os
 
 app = Flask(__name__)

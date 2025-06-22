@@ -6,7 +6,7 @@ const services = [
     { id: 'anything-llm', name: 'AnythingLLM', port: 3001, endpoint: '/health' },
     { id: 'json-crack', name: 'JSON Crack', port: 3000, endpoint: '/health' },
     { id: 'local-send', name: 'LocalSend', port: 5050, endpoint: '/health' },
-    { id: 'pake', name: 'Pake', port: 8081, endpoint: '/health' },
+    { id: 'spake', name: 'Spake', port: 8081, endpoint: '/health' },
     { id: 'kestra', name: 'Kestra', port: 8082, endpoint: '/health' },
     { id: 'windmill', name: 'Windmill', port: 7780, endpoint: '/health' }
 ];

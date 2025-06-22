@@ -1,0 +1,16 @@
+# Sample content for values-staging.yaml
+pake:
+  image:
+    repository: your-dockerhub-username/pake
+    tag: staging
+  replicaCount: 2
+  service:
+    type: ClusterIP
+    port: 8081
+  resources:
+    requests:
+      cpu: "200m"
+      memory: "256Mi"
+    limits:
+      cpu: "500m"
+      memory: "512Mi"

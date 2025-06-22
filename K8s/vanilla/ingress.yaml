@@ -7,13 +7,13 @@ metadata:
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   rules:
-    - host: pake.sogum-ai.example.com
+    - host: spake.sogum-ai.example.com
       http:
         paths:
           - path: /
             pathType: Prefix
             backend:
               service:
-                name: pake
+                name: spake
                 port:
                   number: 8081

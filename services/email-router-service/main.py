@@ -1,6 +1,6 @@
 # main.py
 import os, imaplib, email
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request # type: ignore
 from datetime import datetime
 
 app = Flask(__name__)
@@ -9,12 +9,21 @@ EMAIL_PASS = os.getenv("EMAIL_PASS")
 ROUTING_RULES = os.getenv("ROUTING_RULES", "ocr,json-crack").split(",")
 
 @app.route("/", methods=["GET"])
-def health_check():
+def root_info():
     return jsonify({
         "service": "email-router-service",
         "status": "healthy",
         "timestamp": datetime.now().isoformat(),
         "routing_rules": ROUTING_RULES
+    }), 200
+
+# ✅ NEW: Health check endpoint expected by your dashboard
+@app.route("/health", methods=["GET"])
+def health_check():
+    return jsonify({
+        "status": "healthy",
+        "service": "email-router-service",
+        "timestamp": datetime.now().isoformat()
     }), 200
 
 @app.route("/process", methods=["POST"])

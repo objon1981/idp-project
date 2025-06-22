@@ -1,19 +1,50 @@
-
-# Ignore model binaries
+# === Model binaries and large files ===
 kaggle/*.gguf
 kaggle/models/
 kaggle/llama.cpp/
 
-# Jupyter checkpoint files
+# === Python bytecode and caches ===
+__pycache__/
+*.py[cod]
+*.pyo
+
+# === Jupyter Notebook checkpoints ===
 .ipynb_checkpoints/
 
-# __pycache__ folders
-__pycache__/
+# === Virtual environments ===
+venv/
+**/venv/
 
-# VS Code & Codespaces files
+# === Node.js ===
+node_modules/
+**/node_modules/
+
+# === IDE and Editor folders ===
 .vscode/
 *.code-workspace
-act_Linux_x86_64.tar.gz
+
+# === Secrets & sensitive configs ===
 .secrets/
-.secrets/
-.secrets/
+.env
+*.env
+
+# === Compiled binaries or archives ===
+*.tar.gz
+*.zip
+*.tar
+*.log
+
+# === System files ===
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# === Backup or temp files ===
+*.bak
+*.swp
+*.swo
+*~
+
+# === Project-specific ===
+services/**/app/uploads/
+services/**/app_backup/

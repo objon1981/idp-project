@@ -1,5 +1,7 @@
-flask
-easyocr
-pytesseract
-opencv-python-headless
-Pillow
+Flask==3.1.1
+easyocr==1.7.2
+Pillow==10.4.0
+numpy==1.26.4
+torch==2.7.0
+torchvision==0.22.0
+requests==2.31.0
